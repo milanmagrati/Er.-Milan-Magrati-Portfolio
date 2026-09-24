@@ -1,0 +1,72 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Work Experience Timeline</h1>
+    <p class="page-subtitle">Manage company roles, responsibilities, dates, and technology tags displayed on your career timeline.</p>
+  </div>
+  <div>
+    <a href="{% url 'dashboard:experience-create' %}" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <span>Add Experience</span>
+    </a>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="table-responsive">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Job Title</th>
+          <th>Company</th>
+          <th>Period</th>
+          <th>Current</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for exp in experiences %}
+        <tr>
+          <td><strong>#{{ exp.display_order }}</strong></td>
+          <td><strong>{{ exp.job_title }}</strong></td>
+          <td>{{ exp.company }} &bull; <span style="color: var(--text-dim);">{{ exp.location }}</span></td>
+          <td><span class="mono-tag" style="font-size: 0.85rem;">{{ exp.start_date }} &ndash; {{ exp.end_date }}</span></td>
+          <td>
+            {% if exp.is_current %}
+            <span class="badge badge-success">Current Role</span>
+            {% else %}
+            <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-dim);">-</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if exp.is_active %}
+            <span class="badge badge-success">Active</span>
+            {% else %}
+            <span class="badge badge-danger">Inactive</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'dashboard:experience-edit' exp.id %}" class="btn btn-secondary btn-sm">Edit</a>
+              <form action="{% url 'dashboard:experience-delete' exp.id %}" method="POST" onsubmit="return confirm('Delete experience at {{ exp.company }}?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 2rem;">No experience records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

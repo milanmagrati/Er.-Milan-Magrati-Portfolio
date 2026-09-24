@@ -1,0 +1,730 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- 1. HERO SECTION -->
+<section id="hero" class="hero-section">
+  <div class="hero-ambient-mesh"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left Column: Intro Content -->
+      <div class="hero-text-col">
+        <!-- Stagger 1: Availability Status & Location -->
+        <div class="hero-status-row stagger-item" style="--stagger-order: 1;">
+          {% if profile.is_available %}
+          <div class="hero-status-pill">
+            <span class="status-pulse-ring">
+              <span class="status-dot"></span>
+            </span>
+            <span>{{ profile.availability_status|default:"Available for Full-time Roles &amp; Contracts" }}</span>
+          </div>
+          {% endif %}
+          <div class="hero-location-chip">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span>{{ profile.location|default:"Kathmandu, Nepal" }}</span>
+          </div>
+        </div>
+
+        <!-- Stagger 2: Code Prefix & Big Bold Name -->
+        <div class="hero-intro-header stagger-item" style="--stagger-order: 2;">
+          <div class="code-comment-tag">
+            <span class="tag-bracket">&lt;</span><span class="tag-name">developer</span><span class="tag-bracket">&gt;</span>
+            <span class="tag-text">Full Stack Software Engineer</span>
+          </div>
+          <h1 class="hero-name">
+            <span class="name-prefix">Hi, I'm</span>
+            <span class="gradient-text hero-name-main">{{ profile.name|default:"Milan Magrati" }}</span>
+          </h1>
+        </div>
+
+        <!-- Stagger 3: Interactive Developer Terminal Box (Unique Style, No Awkward Line Wrapping!) -->
+        <div class="hero-terminal-box stagger-item" style="--stagger-order: 3;">
+          <div class="terminal-box-header">
+            <div class="terminal-dots">
+              <span class="term-dot dot-red"></span>
+              <span class="term-dot dot-yellow"></span>
+              <span class="term-dot dot-green"></span>
+            </div>
+            <div class="terminal-title-text">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+              <span>role-engine.py</span>
+            </div>
+            <div class="terminal-tag-pill">Python 3.14</div>
+          </div>
+          <div class="terminal-box-body">
+            <div class="term-code-line">
+              <span class="term-prompt-user">milan@portfolio</span><span class="term-prompt-colon">:</span><span class="term-prompt-dir">~</span><span class="term-prompt-dollar">$</span>
+              <span class="term-cmd-text">python -m developer.roles</span>
+            </div>
+            <div class="term-result-line">
+              <span class="term-arrow">&gt;</span>
+              <span class="typing-container">
+                <span id="typing-designation" class="typing-text">Python Full Stack Developer</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stagger 4: Short Bio -->
+        <p class="hero-description stagger-item" style="--stagger-order: 4;">
+          {{ profile.bio|default:"Python Full Stack Developer with hands-on experience building web applications and RESTful APIs using Django, DRF, and FastAPI. Skilled in PostgreSQL, MySQL, Postman, and frontend technologies with a strong focus on clean code and AI-assisted development." }}
+        </p>
+
+        <!-- Stagger 5: Action Buttons -->
+        <div class="hero-actions stagger-item" style="--stagger-order: 5;">
+          {% if site_settings.enable_projects %}
+          <a href="#projects" class="btn btn-primary btn-glow">
+            <span>Explore Projects</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+            </svg>
+          </a>
+          {% endif %}
+
+          <a href="{% url 'portfolio:download-cv' %}" class="btn btn-outline btn-glass-hover" download>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+            </svg>
+            <span>Download CV (2026)</span>
+          </a>
+
+          {% if site_settings.enable_contact %}
+          <a href="#contact" class="btn btn-ghost">
+            <span>Contact Me</span>
+          </a>
+          {% endif %}
+        </div>
+
+        <!-- Stagger 6: Individual Tech Chips Popping in One by One -->
+        <div class="hero-tech-strip stagger-item" style="--stagger-order: 6;">
+          <span class="tech-chip-item" style="--chip-delay: 1;"><span class="chip-pip"></span>Python 3</span>
+          <span class="tech-chip-item" style="--chip-delay: 2;"><span class="chip-pip"></span>Django 5</span>
+          <span class="tech-chip-item" style="--chip-delay: 3;"><span class="chip-pip"></span>Django REST</span>
+          <span class="tech-chip-item" style="--chip-delay: 4;"><span class="chip-pip"></span>FastAPI</span>
+          <span class="tech-chip-item" style="--chip-delay: 5;"><span class="chip-pip"></span>PostgreSQL</span>
+          <span class="tech-chip-item" style="--chip-delay: 6;"><span class="chip-pip"></span>REST APIs</span>
+          <span class="tech-chip-item" style="--chip-delay: 7;"><span class="chip-pip"></span>Claude Code</span>
+          <span class="tech-chip-item" style="--chip-delay: 8;"><span class="chip-pip"></span>Antigravity</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Animated Profile Visual with Orbiting Satellite Badges -->
+      <div class="hero-image-col">
+        <div class="profile-card-wrapper">
+          <div class="profile-orbital-ring ring-1"></div>
+          <div class="profile-orbital-ring ring-2"></div>
+          <div class="profile-glow-ring"></div>
+          
+          <div class="profile-image-container">
+            {% if profile.profile_image %}
+              <img src="{{ profile.profile_image.url }}?v={{ profile.updated_at.timestamp }}" alt="{{ profile.name }}" class="profile-img">
+            {% else %}
+              <img src="{% static 'img/avatar.svg' %}" alt="{{ profile.name }}" class="profile-img">
+            {% endif %}
+          </div>
+
+          <!-- Floating Satellite Badges -->
+          <div class="profile-satellite-badge badge-top-left">
+            <span class="sat-icon">&#x1F40D;</span>
+            <span>Django &amp; DRF</span>
+          </div>
+
+          <div class="profile-satellite-badge badge-bottom-right">
+            <span class="sat-icon">&#x26A1;</span>
+            <span>FastAPI &amp; APIs</span>
+          </div>
+
+          <div class="profile-floating-badge">
+            <span class="status-dot"></span>
+            <span>BE in IT Engineer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ABOUT & METRICS SECTION -->
+{% if site_settings.enable_about %}
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">About Me</span>
+      <h2 class="section-title">Engineering Reliable <span class="gradient-text">Software Solutions</span></h2>
+      <p class="section-subtitle">Dedicated to clean code, robust backend architecture, and seamless user experiences.</p>
+    </div>
+
+    <div class="about-grid">
+      <!-- Left: Narrative Story -->
+      <div class="about-narrative">
+        {{ profile.about_text|linebreaks }}
+
+        <div class="quick-info-list">
+          <div class="quick-info-item">
+            <div class="quick-info-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+            </div>
+            <span><strong>Location:</strong> {{ profile.location|default:"Kathmandu, Nepal" }}</span>
+          </div>
+
+          <div class="quick-info-item">
+            <div class="quick-info-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+              </svg>
+            </div>
+            <span><strong>Degree:</strong> Bachelor of Engineering in IT (Pokhara University)</span>
+          </div>
+
+          <div class="quick-info-item">
+            <div class="quick-info-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+              </svg>
+            </div>
+            <span><strong>Specialization:</strong> Python, Django, DRF, PostgreSQL, RESTful APIs</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <a href="{% url 'portfolio:download-cv' %}" class="btn btn-primary" download>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <span>Download Full Resume</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Interactive Metrics Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">{{ profile.years_of_experience|default:"2" }}+</div>
+          <div class="stat-label">Years of Development Experience</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">{{ profile.projects_completed|default:"8" }}+</div>
+          <div class="stat-label">Full Stack & Backend Projects</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">{{ profile.technologies_count|default:"18" }}+</div>
+          <div class="stat-label">Technologies, Frameworks & Tools</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">{{ profile.code_commits|default:"500" }}+</div>
+          <div class="stat-label">Git Commits & API Endpoints Engineered</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 3. SKILLS SECTION -->
+{% if site_settings.enable_skills %}
+<section id="skills" class="section" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Technical Competence</span>
+      <h2 class="section-title">Skills & <span class="gradient-text">Technologies</span></h2>
+      <p class="section-subtitle">Proficiencies developed through production experience, hands-on full stack projects, and engineering training.</p>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="skills-tabs">
+      <button class="tab-btn skill-tab-btn active" data-category="all">All Skills</button>
+      {% for cat in categories %}
+      <button class="tab-btn skill-tab-btn" data-category="{{ cat.id }}">{{ cat.name }}</button>
+      {% endfor %}
+    </div>
+
+    <!-- Skills Grid -->
+    <div class="skills-grid">
+      {% for cat in categories %}
+        {% for skill in cat.skills.all %}
+          {% if skill.is_active %}
+          <div class="skill-card" data-category="{{ cat.id }}">
+            <div class="skill-icon-badge">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+              </svg>
+            </div>
+            <div class="skill-info">
+              <div class="skill-title">{{ skill.name }}</div>
+              <div class="skill-category-tag">{{ cat.name }}</div>
+            </div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 4. EXPERIENCE SECTION -->
+{% if site_settings.enable_experience %}
+<section id="experience" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Career History</span>
+      <h2 class="section-title">Professional <span class="gradient-text">Experience</span></h2>
+      <p class="section-subtitle">Demonstrated impact in developing production web applications, designing RESTful APIs, and optimizing database performance.</p>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+
+      {% for exp in experiences %}
+      <div class="timeline-item">
+        <div class="timeline-node"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <div>
+              <h3 class="timeline-role">{{ exp.job_title }}</h3>
+              <div class="timeline-company">
+                {{ exp.company }} &bull; <span style="color: var(--text-muted); font-weight: normal;">{{ exp.location }}</span>
+                {% if exp.is_current %}
+                <span class="timeline-current-pill">Current Role</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="timeline-date-badge">{{ exp.start_date }} &ndash; {{ exp.end_date|default:"Present" }}</div>
+          </div>
+
+          <ul class="timeline-bullets">
+            {% for bullet in exp.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+          </ul>
+
+          {% if exp.tech_list %}
+          <div class="timeline-tech-tags">
+            {% for tech in exp.tech_list %}
+            <span class="timeline-tag">{{ tech }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 5. EDUCATION & TRAINING SECTION -->
+{% if site_settings.enable_education %}
+<section id="education" class="section" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Academic Background</span>
+      <h2 class="section-title">Education & <span class="gradient-text">Training</span></h2>
+      <p class="section-subtitle">Formal foundation in engineering principles, data structures, algorithms, and practical backend software development.</p>
+    </div>
+
+    <div class="edu-grid">
+      {% for edu in educations %}
+      <div class="edu-card">
+        <div class="edu-badge-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="edu-degree">{{ edu.degree }}</h3>
+          <div class="edu-school">{{ edu.institution }} &bull; {{ edu.location }}</div>
+          <div class="edu-meta" style="margin-top: 0.35rem;">
+            <span>{{ edu.start_year }} &ndash; {{ edu.end_year }}</span>
+            {% if edu.grade_gpa %}<span>&bull; {{ edu.grade_gpa }}</span>{% endif %}
+          </div>
+        </div>
+
+        {% if edu.description %}
+        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">{{ edu.description }}</p>
+        {% endif %}
+
+        {% if edu.coursework_list %}
+        <div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Relevant Coursework:</div>
+          <div class="coursework-wrap">
+            {% for course in edu.coursework_list %}
+            <span class="coursework-chip">{{ course }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% for train in trainings %}
+      <div class="edu-card">
+        <div class="edu-badge-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="edu-degree">{{ train.title }}</h3>
+          <div class="edu-school">{{ train.institution }} &bull; {{ train.location }}</div>
+        </div>
+
+        <ul class="timeline-bullets" style="margin-left: 1.25rem;">
+          {% for bullet in train.bullets %}
+          <li>{{ bullet }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 6. PROJECTS SHOWCASE -->
+{% if site_settings.enable_projects %}
+<section id="projects" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Featured Work</span>
+      <h2 class="section-title">Projects & <span class="gradient-text">Architectures</span></h2>
+      <p class="section-subtitle">Real-world applications built with Django, DRF, PostgreSQL, MySQL, and RESTful APIs.</p>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="project-filters">
+      <button class="filter-btn project-filter-btn active" data-filter="All">All Projects</button>
+      {% for cat in project_categories %}
+      <button class="filter-btn project-filter-btn" data-filter="{{ cat }}">{{ cat }}</button>
+      {% endfor %}
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid">
+      {% for project in projects %}
+      <div class="project-card" 
+           data-category="{{ project.category }}"
+           data-title="{{ project.title }}"
+           data-summary="{{ project.short_description }}"
+           data-bullets='{{ project.bullets|json_script:"bullets"|safe }}'
+           data-tech='{{ project.tech_list|json_script:"tech"|safe }}'
+           data-github="{{ project.github_url|default:'' }}"
+           data-live="{{ project.live_demo_url|default:'' }}">
+        
+        <!-- Project Visual Header -->
+        <div class="project-card-header">
+          {% if project.thumbnail %}
+            <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="project-thumbnail" loading="lazy">
+          {% else %}
+            <div class="project-placeholder-visual">
+              <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
+              </svg>
+              <span class="mono-tag">&lt;Python / Django&gt;</span>
+            </div>
+          {% endif %}
+
+          <span class="project-category-badge">{{ project.category }}</span>
+          {% if project.is_featured %}
+          <span class="project-featured-badge">Featured</span>
+          {% endif %}
+        </div>
+
+        <!-- Project Details Body -->
+        <div class="project-card-body">
+          <h3 class="project-title">{{ project.title }}</h3>
+          <p class="project-summary">{{ project.short_description }}</p>
+
+          <div class="project-tech-chips">
+            {% for tech in project.tech_list %}
+            <span class="project-tech-chip">{{ tech }}</span>
+            {% endfor %}
+          </div>
+
+          <div class="project-card-actions">
+            <button type="button" class="btn btn-outline open-project-modal-btn" style="padding: 0.45rem 0.9rem; font-size: 0.85rem;">
+              <span>Architecture &amp; Details</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+              </svg>
+            </button>
+
+            <div class="project-links">
+              {% if project.github_url %}
+              <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub Repository" title="GitHub Source Code">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+              </a>
+              {% endif %}
+              {% if project.live_demo_url %}
+              <a href="{{ project.live_demo_url }}" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="Live Demo" title="View Live Demo">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                </svg>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 7. SERVICES SECTION -->
+{% if site_settings.enable_services %}
+<section id="services" class="section" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Value Offered</span>
+      <h2 class="section-title">What I <span class="gradient-text">Deliver</span></h2>
+      <p class="section-subtitle">High-impact software engineering services spanning backend design, API integration, and full-stack systems.</p>
+    </div>
+
+    <div class="services-grid">
+      {% for s in services %}
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+          </svg>
+        </div>
+        <h3 class="service-title">{{ s.title }}</h3>
+        <p class="service-description">{{ s.description }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 8. CERTIFICATIONS SECTION -->
+{% if site_settings.enable_certifications %}
+<section id="certifications" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Credentials</span>
+      <h2 class="section-title">Certifications &amp; <span class="gradient-text">Achievements</span></h2>
+      <p class="section-subtitle">Verified credentials and professional accomplishments in Python full stack and backend engineering.</p>
+    </div>
+
+    <div class="certs-grid">
+      {% for cert in certifications %}
+      <div class="cert-card">
+        <div class="cert-header">
+          <div class="cert-badge">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="cert-title">{{ cert.name }}</h3>
+            <div class="cert-org">{{ cert.issuing_organization }}</div>
+            <div class="cert-date">{{ cert.issue_date }}</div>
+          </div>
+        </div>
+
+        {% if cert.description %}
+        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">{{ cert.description }}</p>
+        {% endif %}
+
+        {% if cert.credential_url %}
+        <div style="margin-top: auto; padding-top: 0.5rem;">
+          <a href="{{ cert.credential_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;">
+            <span>Verify Credential</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+            </svg>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 9. CONTACT SECTION -->
+{% if site_settings.enable_contact %}
+<section id="contact" class="section" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Let's Connect</span>
+      <h2 class="section-title">Get in <span class="gradient-text">Touch</span></h2>
+      <p class="section-subtitle">Interested in working together or discussing opportunities? Reach out directly.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Left: Direct Info Cards & Live Status -->
+      <div class="contact-info-panel">
+        <!-- Live Availability Card -->
+        <div class="contact-status-card">
+          <div class="status-radar-ring">
+            <span class="status-radar-dot"></span>
+          </div>
+          <div class="status-info">
+            <div class="status-badge-pill">Available for Roles</div>
+            <div class="status-title">Open to Opportunities</div>
+            <p class="status-subtext">Backend Engineering, REST APIs & Full-Stack Systems</p>
+          </div>
+        </div>
+
+        <!-- 1. Email Card -->
+        <a href="mailto:{{ profile.email|default:'milanmagrati68@gmail.com' }}" class="contact-card contact-card-interactive" title="Send Email">
+          <div class="contact-card-icon icon-email">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+          <div class="contact-card-content">
+            <div class="contact-card-label">Direct Email</div>
+            <div class="contact-card-val">{{ profile.email|default:"milanmagrati68@gmail.com" }}</div>
+          </div>
+          <div class="contact-card-arrow">&rarr;</div>
+        </a>
+
+        <!-- 2. Phone / WhatsApp Card -->
+        <a href="https://wa.me/9779866041157" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-interactive" title="Message on WhatsApp">
+          <div class="contact-card-icon icon-phone">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+          </div>
+          <div class="contact-card-content">
+            <div class="contact-card-label">Phone &amp; WhatsApp</div>
+            <div class="contact-card-val">{{ profile.phone|default:"+977 986-6041157" }}</div>
+          </div>
+          <div class="contact-card-arrow">&rarr;</div>
+        </a>
+
+        <!-- 3. Location Card -->
+        <div class="contact-card">
+          <div class="contact-card-icon icon-location">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </div>
+          <div class="contact-card-content">
+            <div class="contact-card-label">Base Location</div>
+            <div class="contact-card-val">{{ profile.location|default:"Kathmandu, Nepal" }}</div>
+          </div>
+          <div class="contact-card-badge">Remote &bull; GMT+5:45</div>
+        </div>
+
+        <!-- 4. LinkedIn Card -->
+        <a href="{{ profile.linkedin_url|default:'https://linkedin.com/in/milan-magrati' }}" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-interactive" title="Connect on LinkedIn">
+          <div class="contact-card-icon icon-linkedin">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.59 1.59 0 0 0 0-3.18 1.59 1.59 0 0 0 0 3.18m1.39 9.74v-8.37H5.07v8.37h2.78z"/>
+            </svg>
+          </div>
+          <div class="contact-card-content">
+            <div class="contact-card-label">Professional Network</div>
+            <div class="contact-card-val">linkedin.com/in/milan-magrati</div>
+          </div>
+          <div class="contact-card-arrow">&rarr;</div>
+        </a>
+      </div>
+
+      <!-- Right: Interactive AJAX Contact Form -->
+      <div class="contact-form-card">
+        <div class="form-glow-header">
+          <div class="form-badge-pill">
+            <span class="live-dot"></span>Direct Inbox
+          </div>
+          <span class="response-time-chip">⚡ Response &lt; 24h</span>
+        </div>
+
+        <h3 class="form-title">Send a Message</h3>
+        <p class="form-subtitle">Have an inquiry, project proposal, or job opportunity? Drop a note below.</p>
+
+        <form id="contact-form" action="{% url 'portfolio:contact-submit' %}" method="POST">
+          {% csrf_token %}
+
+          <!-- Honeypot anti-spam field -->
+          <div class="honeypot-field">
+            <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Your Full Name <span class="required-star">*</span></label>
+              <div class="input-with-icon">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </span>
+                <input type="text" id="contact-name" name="name" class="form-control" placeholder="e.g. John Doe" required minlength="2">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email Address <span class="required-star">*</span></label>
+              <div class="input-with-icon">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                </span>
+                <input type="email" id="contact-email" name="email" class="form-control" placeholder="e.g. john@example.com" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-subject">Subject</label>
+            <div class="input-with-icon">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
+                </svg>
+              </span>
+              <input type="text" id="contact-subject" name="subject" class="form-control" placeholder="Project Inquiry / Job Opportunity">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-message">Message <span class="required-star">*</span></label>
+            <div class="input-with-icon textarea-icon-wrap">
+              <span class="input-icon textarea-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+                </svg>
+              </span>
+              <textarea id="contact-message" name="message" class="form-control" rows="3" placeholder="Share project details, requirements, or opportunities..." required minlength="10"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" id="contact-submit-btn" class="btn-contact-submit">
+            <span class="btn-text">Send Message</span>
+            <span class="btn-icon-airplane">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Helper script element with designation titles for animated typer -->
+{{ designation_titles|json_script:"designation-data" }}
+
+{% endblock %}

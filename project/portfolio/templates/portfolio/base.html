@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>{% block title %}{{ site_settings.site_title|default:"Milan Magrati | Python Full Stack Developer" }}{% endblock %}</title>
+  <meta name="description" content="{{ site_settings.meta_description|default:'Milan Magrati is a Python Full Stack Developer specializing in Django, DRF, FastAPI, PostgreSQL, RESTful APIs, and AI-assisted development.' }}">
+  <meta name="keywords" content="{{ site_settings.meta_keywords|default:'Milan Magrati, Python Developer, Django, DRF, FastAPI, PostgreSQL, Kathmandu Nepal' }}">
+  <meta name="author" content="Milan Magrati">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ site_settings.site_title|default:'Milan Magrati | Python Full Stack Developer' }}">
+  <meta property="og:description" content="{{ site_settings.meta_description|default:'Milan Magrati is a Python Full Stack Developer specializing in Django, DRF, FastAPI, PostgreSQL, and RESTful APIs.' }}">
+  <meta property="og:image" content="{% if profile.profile_image %}{{ profile.profile_image.url }}{% else %}{% static 'img/avatar.svg' %}{% endif %}">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ site_settings.site_title|default:'Milan Magrati | Python Full Stack Developer' }}">
+  <meta name="twitter:description" content="{{ site_settings.meta_description|default:'Milan Magrati is a Python Full Stack Developer specializing in Django, DRF, FastAPI, PostgreSQL, and RESTful APIs.' }}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+
+  <!-- Pre-render Theme Script (Eliminates Flash of Unstyled Theme) -->
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('milan_portfolio_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260924_hero_perfect_balance">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header" id="site-header">
+    <div class="container">
+      <nav class="navbar" aria-label="Main Navigation">
+        <!-- Brand / Monogram -->
+        <a href="{% url 'portfolio:home' %}" class="brand-logo" aria-label="Milan Magrati Home">
+          <div class="brand-badge">M</div>
+          <span>Milan<span class="gradient-text">.dev</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="#hero" class="nav-link active">Home</a></li>
+          {% if site_settings.enable_about %}<li><a href="#about" class="nav-link">About</a></li>{% endif %}
+          {% if site_settings.enable_skills %}<li><a href="#skills" class="nav-link">Skills</a></li>{% endif %}
+          {% if site_settings.enable_experience %}<li><a href="#experience" class="nav-link">Experience</a></li>{% endif %}
+          {% if site_settings.enable_education %}<li><a href="#education" class="nav-link">Education</a></li>{% endif %}
+          {% if site_settings.enable_projects %}<li><a href="#projects" class="nav-link">Projects</a></li>{% endif %}
+          {% if site_settings.enable_services %}<li><a href="#services" class="nav-link">Services</a></li>{% endif %}
+          {% if site_settings.enable_certifications %}<li><a href="#certifications" class="nav-link">Certificates</a></li>{% endif %}
+          {% if site_settings.enable_contact %}<li><a href="#contact" class="nav-link">Contact</a></li>{% endif %}
+        </ul>
+
+        <!-- Navigation Actions (Theme Switcher + Admin Link) -->
+        <div class="nav-actions">
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle theme">
+            <!-- Sun Icon (for dark theme) -->
+            <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20">
+              <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+            </svg>
+            <!-- Moon Icon (for light theme) -->
+            <svg class="icon-moon" style="display: none;" viewBox="0 0 24 24" width="20" height="20">
+              <path d="M12.3 2a10 10 0 0 0-.19 20 10 10 0 0 0 8.92-5.5 1 1 0 0 0-1.12-1.39A8 8 0 0 1 10.89 4.19 1 1 0 0 0 9.84 3 9.9 9.9 0 0 0 12.3 2z"/>
+            </svg>
+          </button>
+
+          <!-- Unique Animated Cyber-Glow CMS Portal Button -->
+          <a href="{% url 'dashboard:home' %}" class="cms-portal-btn" title="Manage portfolio in CMS dashboard" aria-label="Open CMS Control Panel">
+            <span class="cms-glow-aura"></span>
+            <span class="cms-border-track"></span>
+            <span class="cms-btn-inner">
+              <span class="cms-icon-wrapper">
+                <svg class="cms-gear-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+              </span>
+              <span class="cms-text">CMS</span>
+              <span class="cms-live-pulse" title="CMS Online"></span>
+            </span>
+          </a>
+
+          <!-- Mobile Hamburger Menu Button -->
+          <button id="hamburger-btn" class="hamburger-btn" aria-label="Toggle Navigation Menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+      <a href="#hero" class="mobile-nav-link active">Home</a>
+      {% if site_settings.enable_about %}<a href="#about" class="mobile-nav-link">About</a>{% endif %}
+      {% if site_settings.enable_skills %}<a href="#skills" class="mobile-nav-link">Skills</a>{% endif %}
+      {% if site_settings.enable_experience %}<a href="#experience" class="mobile-nav-link">Experience</a>{% endif %}
+      {% if site_settings.enable_education %}<a href="#education" class="mobile-nav-link">Education</a>{% endif %}
+      {% if site_settings.enable_projects %}<a href="#projects" class="mobile-nav-link">Projects</a>{% endif %}
+      {% if site_settings.enable_services %}<a href="#services" class="mobile-nav-link">Services</a>{% endif %}
+      {% if site_settings.enable_certifications %}<a href="#certifications" class="mobile-nav-link">Certificates</a>{% endif %}
+      {% if site_settings.enable_contact %}<a href="#contact" class="mobile-nav-link">Contact</a>{% endif %}
+      <a href="{% url 'dashboard:home' %}" class="mobile-nav-link mobile-cms-btn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+        <span>Admin CMS Dashboard</span>
+        <span class="cms-live-pulse"></span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Project Details Modal Container -->
+  <div id="project-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-project-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <span id="modal-project-category" class="section-tag" style="margin-bottom: 0.35rem;">Category</span>
+          <h3 id="modal-project-title" class="project-title" style="font-size: 1.5rem;">Project Title</h3>
+        </div>
+        <button class="modal-close-btn" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h4 style="font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--text-primary);">Architecture & Key Achievements</h4>
+          <p id="modal-project-summary" style="color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.6;"></p>
+          <ul id="modal-project-bullets" class="timeline-bullets" style="margin-left: 1.25rem;"></ul>
+        </div>
+
+        <div>
+          <h4 style="font-size: 1.05rem; margin-bottom: 0.65rem; color: var(--text-primary);">Technologies & Tools Used</h4>
+          <div id="modal-project-tech" class="project-tech-chips"></div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+          <a id="modal-project-github" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="display: none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            <span>View Source on GitHub</span>
+          </a>
+          <a id="modal-project-live" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+            </svg>
+            <span>Live Demonstration</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" aria-live="polite"></div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 0.5rem;">
+            <div class="brand-badge" style="width: 32px; height: 32px; font-size: 0.95rem;">M</div>
+            <span>Milan Magrati</span>
+          </div>
+          <p class="footer-copy">
+            &copy; 2026 Milan Magrati. All rights reserved. Built with Python, Django, DRF & modern web standards.
+          </p>
+        </div>
+
+        <div class="footer-socials">
+          {% if profile.github_url %}
+          <a href="{{ profile.github_url }}" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub Profile">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+          </a>
+          {% endif %}
+          {% if profile.linkedin_url %}
+          <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn Profile">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.59 1.59 0 0 0 0-3.18 1.59 1.59 0 0 0 0 3.18m1.39 9.74v-8.37H5.07v8.37h2.78z"/>
+            </svg>
+          </a>
+          {% endif %}
+          <a href="#hero" class="icon-btn" aria-label="Back to Top" title="Back to Top">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

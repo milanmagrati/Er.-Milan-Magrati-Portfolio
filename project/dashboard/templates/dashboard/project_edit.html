@@ -1,0 +1,144 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Project: {{ project.title }}</h1>
+    <p class="page-subtitle">Update project metadata, architecture bullet points, repository URLs, and thumbnail.</p>
+  </div>
+  <div>
+    <a href="{% url 'dashboard:projects' %}" class="btn btn-secondary btn-sm">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      <span>Back to Projects</span>
+    </a>
+  </div>
+</div>
+
+<div class="dash-card">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.title.id_for_label }}">Project Title</label>
+        {{ form.title }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.category.id_for_label }}">Category</label>
+        {{ form.category }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.short_description.id_for_label }}">Short Summary (Card Preview)</label>
+      {{ form.short_description }}
+      <div class="form-help">Displayed on the portfolio project card (under 300 characters).</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.detailed_description.id_for_label }}">Detailed Description &amp; Architecture (Bullet Points)</label>
+      {{ form.detailed_description }}
+      <div class="form-help">Each line starting with • or bullet will be nicely styled in the project modal.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.technologies.id_for_label }}">Technologies Used (Comma Separated)</label>
+      {{ form.technologies }}
+      <div class="form-help">e.g. Python, Django, DRF, PostgreSQL, Postman, Bootstrap</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.github_url.id_for_label }}">GitHub Repository URL</label>
+        {{ form.github_url }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.live_demo_url.id_for_label }}">Live Demo URL (Optional)</label>
+        {{ form.live_demo_url }}
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: center; margin: 1rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--dash-border);">
+      <div>
+        {% if project.thumbnail %}
+        <div style="margin-bottom: 0.5rem; font-size: 0.82rem; color: var(--text-dim);">Current Thumbnail:</div>
+        <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" style="width: 160px; height: 95px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--dash-border);">
+        {% else %}
+        <div style="font-size: 0.85rem; color: var(--text-dim);">No thumbnail uploaded yet.</div>
+        {% endif %}
+      </div>
+      <div>
+        <label class="form-label" for="{{ form.thumbnail.id_for_label }}">Upload / Replace Thumbnail Image</label>
+        {{ form.thumbnail }}
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 2rem; align-items: center; margin: 1.5rem 0;">
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+        {{ form.is_featured }}
+        <label class="form-label" for="{{ form.is_featured.id_for_label }}" style="margin-bottom: 0;">Mark as Featured Project</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+        {{ form.is_active }}
+        <label class="form-label" for="{{ form.is_active.id_for_label }}" style="margin-bottom: 0;">Active (Visible on Portfolio)</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0;">
+        <label class="form-label" for="{{ form.display_order.id_for_label }}" style="margin-bottom: 0;">Order:</label>
+        {{ form.display_order }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">Save Project Changes</button>
+  </form>
+</div>
+
+<!-- Project Gallery Section -->
+<div class="dash-card">
+  <div class="dash-card-header">
+    <h3 class="dash-card-title">Project Gallery Images</h3>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    {% for img in project.gallery.all %}
+    <div style="border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 0.5rem; position: relative;">
+      <img src="{{ img.image.url }}" alt="{{ img.caption }}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 4px;">
+      <div style="margin-top: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.75rem; color: var(--text-dim);">{{ img.caption|default:"No caption" }}</span>
+        <form action="{% url 'dashboard:project-image-delete' img.id %}" method="POST" onsubmit="return confirm('Delete this image?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm" style="padding: 0.15rem 0.45rem; font-size: 0.7rem;">Delete</button>
+        </form>
+      </div>
+    </div>
+    {% empty %}
+    <div style="color: var(--text-dim); font-size: 0.9rem;">No additional gallery images uploaded for this project.</div>
+    {% endfor %}
+  </div>
+
+  <!-- Upload Gallery Image Form -->
+  <form action="{% url 'dashboard:project-image-add' project.id %}" method="POST" enctype="multipart/form-data" style="padding-top: 1rem; border-top: 1px solid var(--dash-border);">
+    {% csrf_token %}
+    <h4 style="font-size: 1rem; margin-bottom: 0.75rem;">Add New Gallery Image</h4>
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: flex-end;">
+      <div>
+        <label class="form-label">Image File</label>
+        {{ gallery_form.image }}
+      </div>
+      <div>
+        <label class="form-label">Caption (Optional)</label>
+        {{ gallery_form.caption }}
+      </div>
+      <div>
+        <label class="form-label">Display Order</label>
+        {{ gallery_form.display_order }}
+      </div>
+      <button type="submit" class="btn btn-secondary btn-sm" style="height: 42px;">Add Image</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

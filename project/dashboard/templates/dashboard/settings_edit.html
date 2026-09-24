@@ -1,0 +1,82 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Global Site Settings &amp; Section Visibility</h1>
+    <p class="page-subtitle">Enable or disable entire portfolio sections dynamically without editing code, and customize SEO meta tags.</p>
+  </div>
+</div>
+
+<div class="dash-card">
+  <form method="POST">
+    {% csrf_token %}
+
+    <h3 style="font-size: 1.15rem; margin-bottom: 1.25rem;">SEO &amp; Search Engine Optimization</h3>
+    <div class="form-group">
+      <label class="form-label" for="{{ form.site_title.id_for_label }}">Browser Tab Title</label>
+      {{ form.site_title }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.meta_description.id_for_label }}">Meta Description</label>
+      {{ form.meta_description }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.meta_keywords.id_for_label }}">Meta Keywords (Comma separated)</label>
+      {{ form.meta_keywords }}
+    </div>
+
+    <h3 style="font-size: 1.15rem; margin: 2rem 0 1rem 0; padding-top: 1.5rem; border-top: 1px solid var(--dash-border);">Section Visibility Toggles</h3>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.25rem;">Unchecking any section will immediately hide it from both the navbar and the portfolio page.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_about }}
+        <label class="form-label" for="{{ form.enable_about.id_for_label }}" style="margin-bottom: 0;">About &amp; Metrics Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_skills }}
+        <label class="form-label" for="{{ form.enable_skills.id_for_label }}" style="margin-bottom: 0;">Skills &amp; Technologies Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_experience }}
+        <label class="form-label" for="{{ form.enable_experience.id_for_label }}" style="margin-bottom: 0;">Work Experience Timeline</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_education }}
+        <label class="form-label" for="{{ form.enable_education.id_for_label }}" style="margin-bottom: 0;">Education &amp; Training Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_projects }}
+        <label class="form-label" for="{{ form.enable_projects.id_for_label }}" style="margin-bottom: 0;">Projects Showcase Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_services }}
+        <label class="form-label" for="{{ form.enable_services.id_for_label }}" style="margin-bottom: 0;">Services Offered Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_certifications }}
+        <label class="form-label" for="{{ form.enable_certifications.id_for_label }}" style="margin-bottom: 0;">Certifications Section</label>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        {{ form.enable_contact }}
+        <label class="form-label" for="{{ form.enable_contact.id_for_label }}" style="margin-bottom: 0;">Contact Form &amp; Cards</label>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--dash-border);">
+      <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">Save Site Settings</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

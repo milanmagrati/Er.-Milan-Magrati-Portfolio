@@ -1,0 +1,103 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Resume / CV Management</h1>
+    <p class="page-subtitle">Upload your latest PDF CV. The active CV here directly powers the "Download CV" buttons across your portfolio.</p>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+  <!-- Upload New CV Card -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h3 class="dash-card-title">Upload New Resume File</h3>
+    </div>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="{{ form.title.id_for_label }}">Resume Title</label>
+        {{ form.title }}
+        <div class="form-help">e.g. Milan Magrati CV 2026</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.file.id_for_label }}">PDF Document File</label>
+        {{ form.file }}
+        <div class="form-help">Select your updated PDF resume (Max 10MB).</div>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+        {{ form.is_active }}
+        <label class="form-label" for="{{ form.is_active.id_for_label }}" style="margin-bottom: 0;">Set as currently active download</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Upload Resume</button>
+    </form>
+  </div>
+
+  <!-- Uploaded Resumes Table -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h3 class="dash-card-title">Uploaded Resumes</h3>
+      <a href="{% url 'portfolio:download-cv' %}" target="_blank" class="btn btn-secondary btn-sm">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        <span>Test Download Button</span>
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Document Title</th>
+            <th>Uploaded Date</th>
+            <th>Active Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in resumes %}
+          <tr>
+            <td>
+              <strong>{{ r.title }}</strong>
+              {% if r.file %}
+              <div style="font-size: 0.8rem; color: var(--text-dim);">{{ r.file.name }}</div>
+              {% endif %}
+            </td>
+            <td style="font-size: 0.85rem; color: var(--text-dim);">{{ r.uploaded_at|date:"M d, Y" }}</td>
+            <td>
+              {% if r.is_active %}
+              <span class="badge badge-success">Active Live CV</span>
+              {% else %}
+              <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-dim);">Inactive</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display: flex; gap: 0.5rem;">
+                {% if not r.is_active %}
+                <a href="{% url 'dashboard:resume-activate' r.id %}" class="btn btn-secondary btn-sm">Set Active</a>
+                {% endif %}
+                {% if r.file %}
+                <a href="{{ r.file.url }}" target="_blank" class="btn btn-secondary btn-sm" title="View file">View</a>
+                {% endif %}
+                <form action="{% url 'dashboard:resume-delete' r.id %}" method="POST" onsubmit="return confirm('Delete this resume file?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">No resumes uploaded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,503 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'vendor/cropperjs/cropper.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Personal Profile Information</h1>
+    <p class="page-subtitle">Update your name, bio, contact links, metrics, and profile avatar.</p>
+  </div>
+</div>
+
+<div class="dash-card">
+  <form method="POST" enctype="multipart/form-data" id="profile-form">
+    {% csrf_token %}
+    <input type="hidden" name="cropped_image_data" id="cropped_image_data">
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.name.id_for_label }}">Full Name</label>
+        {{ form.name }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.title.id_for_label }}">Primary Professional Title</label>
+        {{ form.title }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.bio.id_for_label }}">Hero Introduction (Short Summary)</label>
+      {{ form.bio }}
+      <div class="form-help">Displayed in the main Hero section below your name.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.about_text.id_for_label }}">Detailed About Narrative</label>
+      {{ form.about_text }}
+      <div class="form-help">Displayed in the About Me section. Paragraph breaks will be formatted nicely.</div>
+    </div>
+
+    <!-- Avatar Upload with Interactive Cropper & Align Tool -->
+    <div style="margin: 1.5rem 0; padding: 1.25rem 1.5rem; background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--dash-border);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.15rem;">Profile Headshot &amp; Portrait</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Live updates the circular hero portrait on your portfolio.</p>
+        </div>
+        <span id="crop-status-badge" style="display: none; padding: 0.35rem 0.85rem; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.8rem; font-weight: 600;">
+          ✓ Photo cropped &amp; aligned (click "Save Profile Changes" below)
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 130px 1fr; gap: 1.5rem; align-items: center;">
+        <div>
+          <!-- Clickable Avatar Wrapper with Hover Overlay -->
+          <div class="avatar-cropper-trigger" id="avatar-trigger-btn" title="Click to Crop or Align Photo">
+            {% if profile.profile_image %}
+            <img id="avatar-preview" src="{{ profile.profile_image.url }}?v={{ profile.updated_at.timestamp }}" alt="Profile Avatar" style="width: 120px; height: 120px; object-fit: cover; display: block;">
+            {% else %}
+            <img id="avatar-preview" src="{% static 'img/avatar.svg' %}" alt="Profile Avatar" style="width: 120px; height: 120px; object-fit: cover; display: block;">
+            {% endif %}
+            <div class="avatar-cropper-overlay">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17 15h2V7c0-1.1-.9-2-2-2H9v2h8v8zM7 17V1H5v4H1v2h4v10c0 1.1.9 2 2 2h10v4h2v-4h4v-2H7z"/></svg>
+              <span>Crop &amp; Align</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+            <div>
+              <label class="form-label" for="{{ form.profile_image.id_for_label }}" style="margin-bottom: 0.35rem;">Choose New Photo File</label>
+              {{ form.profile_image }}
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-top: 0.25rem;">
+              <button type="button" id="btn-crop-open" class="btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.84rem; display: inline-flex; align-items: center; gap: 0.45rem;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 15h2V7c0-1.1-.9-2-2-2H9v2h8v8zM7 17V1H5v4H1v2h4v10c0 1.1.9 2 2 2h10v4h2v-4h4v-2H7z"/></svg>
+                <span>📐 Resize, Crop &amp; Align Tool</span>
+              </button>
+              <span class="form-help" style="margin: 0;">Selecting any image opens the interactive cropper immediately.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.email.id_for_label }}">Email Address</label>
+        {{ form.email }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+        {{ form.phone }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.location.id_for_label }}">Location</label>
+        {{ form.location }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.availability_status.id_for_label }}">Availability Status Text</label>
+        {{ form.availability_status }}
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.github_url.id_for_label }}">GitHub Profile URL</label>
+        {{ form.github_url }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.linkedin_url.id_for_label }}">LinkedIn Profile URL</label>
+        {{ form.linkedin_url }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.website.id_for_label }}">Personal Website (Optional)</label>
+        {{ form.website }}
+      </div>
+    </div>
+
+    <h3 style="font-size: 1.15rem; margin: 1.5rem 0 1rem 0; border-top: 1px solid var(--dash-border); padding-top: 1.25rem;">Key Highlight Metrics</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.years_of_experience.id_for_label }}">Years of Experience</label>
+        {{ form.years_of_experience }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.projects_completed.id_for_label }}">Projects Completed</label>
+        {{ form.projects_completed }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.technologies_count.id_for_label }}">Technologies Count</label>
+        {{ form.technologies_count }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.code_commits.id_for_label }}">Code Commits Metric</label>
+        {{ form.code_commits }}
+      </div>
+    </div>
+
+    <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem;">
+      {{ form.is_available }}
+      <label class="form-label" for="{{ form.is_available.id_for_label }}" style="margin-bottom: 0;">Mark as actively available for job opportunities / contracts</label>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+        <span>Save Profile Changes</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- ==========================================================================
+     INTERACTIVE CROP, RESIZE & ALIGN MODAL
+     ========================================================================== -->
+<div id="crop-modal" class="crop-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="crop-modal-heading">
+  <div class="crop-modal-dialog">
+    <div class="crop-modal-header">
+      <div>
+        <div class="crop-modal-title" id="crop-modal-heading">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M17 15h2V7c0-1.1-.9-2-2-2H9v2h8v8zM7 17V1H5v4H1v2h4v10c0 1.1.9 2 2 2h10v4h2v-4h4v-2H7z"/>
+          </svg>
+          <span>Crop, Resize &amp; Align Photo</span>
+        </div>
+        <div class="crop-modal-subtitle">Drag to align, scroll or use slider to zoom, and frame your portrait perfectly for your portfolio.</div>
+      </div>
+      <button type="button" class="crop-modal-close" id="btn-modal-close" aria-label="Close modal">&times;</button>
+    </div>
+
+    <div class="crop-modal-body">
+      <!-- Left: Interactive Cropper Canvas -->
+      <div>
+        <div class="cropper-stage-wrapper">
+          <img id="cropper-image" src="" alt="Photo to crop">
+        </div>
+        
+        <div class="cropper-toolbar">
+          <button type="button" class="crop-tool-btn" id="tool-zoom-in" title="Zoom In">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2z"/></svg>
+            Zoom +
+          </button>
+          <button type="button" class="crop-tool-btn" id="tool-zoom-out" title="Zoom Out">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"/></svg>
+            Zoom -
+          </button>
+          <button type="button" class="crop-tool-btn" id="tool-rotate-left" title="Rotate Left 90°">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.88-1.6-1.01-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c3.37 0 6 2.63 6 6s-2.63 6-6 6c-.87 0-1.7-.19-2.46-.53l-1.48 1.48c1.2.64 2.56 1.05 3.94 1.05 4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
+            Rotate ↺
+          </button>
+          <button type="button" class="crop-tool-btn" id="tool-rotate-right" title="Rotate Right 90°">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.55 5.55L11 1v3.07C6.03 4.07 2 8.1 2 13.07s4.03 9 9 9c1.38 0 2.74-.41 3.94-1.05l-1.48-1.48c-.76.34-1.59.53-2.46.53-3.37 0-6-2.63-6-6s2.63-6 6-6V10l4.55-4.45zM19.93 11c-.17-1.39-.73-2.73-1.63-3.89l-1.41 1.42c.53.75.88 1.6 1.02 2.47h2.02zm-2.02 2c-.14.87-.49 1.72-1.02 2.47l1.41 1.42c.9-1.16 1.46-2.5 1.63-3.89h-2.02zm-3.9 4.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.88-2.46 1.03z"/></svg>
+            Rotate ↻
+          </button>
+          <button type="button" class="crop-tool-btn" id="tool-flip-x" title="Flip Horizontal">⇄ Flip X</button>
+          <button type="button" class="crop-tool-btn" id="tool-flip-y" title="Flip Vertical">⇅ Flip Y</button>
+          <button type="button" class="crop-tool-btn" id="tool-reset" title="Reset View">⟲ Reset</button>
+        </div>
+      </div>
+
+      <!-- Right: Real-time Previews & Sliders -->
+      <div class="crop-sidebar-panel">
+        <div class="crop-preview-box">
+          <div class="crop-preview-title">Hero Portrait Preview</div>
+          <div class="crop-circle-frame">
+            <div class="img-preview preview-circle" style="width: 100%; height: 100%; overflow: hidden;"></div>
+          </div>
+          <div class="crop-preview-hint">This preview shows exactly how your headshot appears inside the circular hero portrait.</div>
+        </div>
+
+        <div class="crop-slider-group">
+          <div class="crop-slider-label">
+            <span>Zoom Level</span>
+            <span id="zoom-val-text">100%</span>
+          </div>
+          <input type="range" class="crop-range-slider" id="zoom-range" min="0.1" max="3" step="0.05" value="1">
+        </div>
+
+        <div class="crop-slider-group">
+          <div class="crop-slider-label"><span>Crop Aspect Ratio</span></div>
+          <div class="crop-aspect-selector">
+            <button type="button" class="crop-aspect-btn active" id="btn-aspect-1-1">1:1 Square</button>
+            <button type="button" class="crop-aspect-btn" id="btn-aspect-free">Free Ratio</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crop-modal-footer">
+      <button type="button" class="btn btn-outline" id="btn-crop-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="btn-crop-apply">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+        <span>Apply Crop &amp; Align</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/cropperjs/cropper.min.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const avatarInput = document.querySelector('input[type="file"][name="profile_image"]');
+  const avatarPreview = document.getElementById('avatar-preview');
+  const croppedDataInput = document.getElementById('cropped_image_data');
+  const cropStatusBadge = document.getElementById('crop-status-badge');
+  const avatarTriggerBtn = document.getElementById('avatar-trigger-btn');
+  const btnCropOpen = document.getElementById('btn-crop-open');
+
+  // Modal elements
+  const cropModal = document.getElementById('crop-modal');
+  const cropperImage = document.getElementById('cropper-image');
+  const btnModalClose = document.getElementById('btn-modal-close');
+  const btnCropCancel = document.getElementById('btn-crop-cancel');
+  const btnCropApply = document.getElementById('btn-crop-apply');
+
+  // Tool buttons
+  const toolZoomIn = document.getElementById('tool-zoom-in');
+  const toolZoomOut = document.getElementById('tool-zoom-out');
+  const toolRotateLeft = document.getElementById('tool-rotate-left');
+  const toolRotateRight = document.getElementById('tool-rotate-right');
+  const toolFlipX = document.getElementById('tool-flip-x');
+  const toolFlipY = document.getElementById('tool-flip-y');
+  const toolReset = document.getElementById('tool-reset');
+  const zoomRange = document.getElementById('zoom-range');
+  const zoomValText = document.getElementById('zoom-val-text');
+  const btnAspect11 = document.getElementById('btn-aspect-1-1');
+  const btnAspectFree = document.getElementById('btn-aspect-free');
+
+  let cropper = null;
+  let scaleX = 1;
+  let scaleY = 1;
+  let activeFileName = 'profile_cropped.jpg';
+
+  // Open modal with image source
+  function openCropper(src, fileName) {
+    if (!src) return;
+    if (fileName) activeFileName = fileName;
+    
+    cropperImage.src = src;
+    cropModal.classList.add('active');
+
+    // Wait for image to load, then initialize cropper
+    cropperImage.onload = function() {
+      if (cropper) {
+        cropper.destroy();
+      }
+      scaleX = 1;
+      scaleY = 1;
+      zoomRange.value = 1;
+      zoomValText.textContent = '100%';
+
+      cropper = new Cropper(cropperImage, {
+        aspectRatio: 1,
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 0.88,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+        preview: '.img-preview',
+        checkCrossOrigin: false,
+        zoom: function(e) {
+          const ratio = Math.max(0.1, Math.min(3, e.detail.ratio));
+          zoomRange.value = ratio.toFixed(2);
+          zoomValText.textContent = Math.round(ratio * 100) + '%';
+        }
+      });
+    };
+  }
+
+  function closeCropper() {
+    cropModal.classList.remove('active');
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
+  }
+
+  // Handle file input change: immediately launch cropper
+  if (avatarInput) {
+    avatarInput.addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          openCropper(ev.target.result, file.name);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Click on avatar or "Crop & Align Tool" button
+  function triggerCurrentPhotoCrop() {
+    if (avatarPreview && avatarPreview.src && !avatarPreview.src.includes('avatar.svg')) {
+      openCropper(avatarPreview.src, 'profile_aligned.jpg');
+    } else if (avatarInput) {
+      avatarInput.click();
+    }
+  }
+
+  if (avatarTriggerBtn) {
+    avatarTriggerBtn.addEventListener('click', triggerCurrentPhotoCrop);
+  }
+  if (btnCropOpen) {
+    btnCropOpen.addEventListener('click', triggerCurrentPhotoCrop);
+  }
+
+  // Close modal events
+  if (btnModalClose) btnModalClose.addEventListener('click', closeCropper);
+  if (btnCropCancel) btnCropCancel.addEventListener('click', closeCropper);
+
+  // Esc key closes modal
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && cropModal.classList.contains('active')) {
+      closeCropper();
+    }
+  });
+
+  // Cropper toolbar handlers
+  if (toolZoomIn) {
+    toolZoomIn.addEventListener('click', function() {
+      if (cropper) cropper.zoom(0.1);
+    });
+  }
+  if (toolZoomOut) {
+    toolZoomOut.addEventListener('click', function() {
+      if (cropper) cropper.zoom(-0.1);
+    });
+  }
+  if (zoomRange) {
+    zoomRange.addEventListener('input', function() {
+      if (cropper) {
+        cropper.zoomTo(parseFloat(this.value));
+        zoomValText.textContent = Math.round(this.value * 100) + '%';
+      }
+    });
+  }
+  if (toolRotateLeft) {
+    toolRotateLeft.addEventListener('click', function() {
+      if (cropper) cropper.rotate(-90);
+    });
+  }
+  if (toolRotateRight) {
+    toolRotateRight.addEventListener('click', function() {
+      if (cropper) cropper.rotate(90);
+    });
+  }
+  if (toolFlipX) {
+    toolFlipX.addEventListener('click', function() {
+      if (cropper) {
+        scaleX = -scaleX;
+        cropper.scaleX(scaleX);
+      }
+    });
+  }
+  if (toolFlipY) {
+    toolFlipY.addEventListener('click', function() {
+      if (cropper) {
+        scaleY = -scaleY;
+        cropper.scaleY(scaleY);
+      }
+    });
+  }
+  if (toolReset) {
+    toolReset.addEventListener('click', function() {
+      if (cropper) {
+        cropper.reset();
+        scaleX = 1;
+        scaleY = 1;
+        zoomRange.value = 1;
+        zoomValText.textContent = '100%';
+      }
+    });
+  }
+
+  // Aspect ratio toggles
+  if (btnAspect11 && btnAspectFree) {
+    btnAspect11.addEventListener('click', function() {
+      if (cropper) {
+        cropper.setAspectRatio(1);
+        btnAspect11.classList.add('active');
+        btnAspectFree.classList.remove('active');
+      }
+    });
+    btnAspectFree.addEventListener('click', function() {
+      if (cropper) {
+        cropper.setAspectRatio(NaN);
+        btnAspectFree.classList.add('active');
+        btnAspect11.classList.remove('active');
+      }
+    });
+  }
+
+  // Apply Crop
+  if (btnCropApply) {
+    btnCropApply.addEventListener('click', function() {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas({
+        width: 600,
+        height: 600,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high'
+      });
+
+      if (!canvas) return;
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+      // 1. Update preview on the form
+      avatarPreview.src = dataUrl;
+
+      // 2. Set hidden base64 input
+      croppedDataInput.value = dataUrl;
+
+      // 3. Update FileInput with a Blob via DataTransfer API for standard multipart upload
+      canvas.toBlob(function(blob) {
+        if (blob && window.DataTransfer && avatarInput) {
+          try {
+            const dataTransfer = new DataTransfer();
+            const croppedFile = new File([blob], activeFileName.replace(/\.[^/.]+$/, "") + "_cropped.jpg", { type: 'image/jpeg' });
+            dataTransfer.items.add(croppedFile);
+            avatarInput.files = dataTransfer.files;
+          } catch (err) {
+            console.warn('DataTransfer not supported, falling back to base64 input:', err);
+          }
+        }
+      }, 'image/jpeg', 0.92);
+
+      // 4. Show success indicator
+      if (cropStatusBadge) {
+        cropStatusBadge.style.display = 'inline-block';
+      }
+
+      // Close modal
+      closeCropper();
+    });
+  }
+});
+</script>
+{% endblock %}

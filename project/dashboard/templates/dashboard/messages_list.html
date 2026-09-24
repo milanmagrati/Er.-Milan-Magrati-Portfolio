@@ -1,0 +1,66 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Client Inquiries &amp; Messages</h1>
+    <p class="page-subtitle">Submissions from the public contact form on your portfolio website.</p>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="table-responsive">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Sender</th>
+          <th>Subject</th>
+          <th>Received Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in messages_list %}
+        <tr style="{% if not msg.is_read %}background-color: rgba(99,102,241,0.06);{% endif %}">
+          <td>
+            <strong><a href="{% url 'dashboard:message-detail' msg.id %}">{{ msg.name }}</a></strong>
+            <div style="font-size: 0.8rem; color: var(--text-dim);">{{ msg.email }}</div>
+          </td>
+          <td>
+            <a href="{% url 'dashboard:message-detail' msg.id %}" style="font-weight: 500;">
+              {{ msg.subject|truncatechars:45 }}
+            </a>
+          </td>
+          <td style="font-size: 0.85rem; color: var(--text-dim);">{{ msg.created_at|date:"M d, Y, H:i" }}</td>
+          <td>
+            {% if msg.is_read %}
+            <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-dim);">Read</span>
+            {% else %}
+            <span class="badge badge-warning">New / Unread</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'dashboard:message-detail' msg.id %}" class="btn btn-secondary btn-sm">Read</a>
+              <a href="{% url 'dashboard:message-toggle-read' msg.id %}" class="btn btn-secondary btn-sm" title="Toggle read/unread">
+                {% if msg.is_read %}Mark Unread{% else %}Mark Read{% endif %}
+              </a>
+              <form action="{% url 'dashboard:message-delete' msg.id %}" method="POST" onsubmit="return confirm('Delete this message?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 3rem;">No contact messages received yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Education &amp; Training Records</h1>
+    <p class="page-subtitle">Manage university degrees, coursework, and technical training certificates.</p>
+  </div>
+  <div>
+    <a href="{% url 'dashboard:education-create' %}" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <span>Add Education</span>
+    </a>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header">
+    <h3 class="dash-card-title">Degrees &amp; Formal Education</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Degree</th>
+          <th>Institution</th>
+          <th>Years</th>
+          <th>Grade / Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for edu in educations %}
+        <tr>
+          <td>#{{ edu.display_order }}</td>
+          <td><strong>{{ edu.degree }}</strong></td>
+          <td>{{ edu.institution }} &bull; <span style="color: var(--text-dim);">{{ edu.location }}</span></td>
+          <td>{{ edu.start_year }} &ndash; {{ edu.end_year }}</td>
+          <td><span class="badge badge-success">{{ edu.grade_gpa|default:"Completed" }}</span></td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'dashboard:education-edit' edu.id %}" class="btn btn-secondary btn-sm">Edit</a>
+              <form action="{% url 'dashboard:education-delete' edu.id %}" method="POST" onsubmit="return confirm('Delete education record?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 2rem;">No education records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header">
+    <h3 class="dash-card-title">Specialized Trainee Programs</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Title</th>
+          <th>Institution</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tr in trainings %}
+        <tr>
+          <td>#{{ tr.display_order }}</td>
+          <td><strong>{{ tr.title }}</strong></td>
+          <td>{{ tr.institution }}</td>
+          <td>{{ tr.location }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">No training records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

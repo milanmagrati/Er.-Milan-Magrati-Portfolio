@@ -1,0 +1,62 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Services Offered</h1>
+    <p class="page-subtitle">Manage engineering services and competencies presented to prospective employers and clients.</p>
+  </div>
+  <div>
+    <a href="{% url 'dashboard:service-create' %}" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <span>Add Service</span>
+    </a>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="table-responsive">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Service Title</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in services %}
+        <tr>
+          <td>#{{ s.display_order }}</td>
+          <td><strong>{{ s.title }}</strong></td>
+          <td style="color: var(--text-muted); font-size: 0.88rem;">{{ s.description|truncatechars:120 }}</td>
+          <td>
+            {% if s.is_active %}
+            <span class="badge badge-success">Active</span>
+            {% else %}
+            <span class="badge badge-danger">Inactive</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'dashboard:service-edit' s.id %}" class="btn btn-secondary btn-sm">Edit</a>
+              <form action="{% url 'dashboard:service-delete' s.id %}" method="POST" onsubmit="return confirm('Delete this service?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 2rem;">No services configured.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
