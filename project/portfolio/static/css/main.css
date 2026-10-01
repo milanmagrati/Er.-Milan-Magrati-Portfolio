@@ -2041,6 +2041,10 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+
+  .contact-grid > * {
+    min-width: 0;
+  }
 }
 
 .contact-info-panel {
@@ -2707,9 +2711,13 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================== */
 @media (max-width: 1024px) {
   .hero-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     text-align: center;
     gap: 3rem;
+  }
+
+  .hero-grid > * {
+    min-width: 0;
   }
 
   .hero-image-col {
@@ -2741,6 +2749,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
+  .hero-grid {
+    gap: 2rem;
+  }
+
   .nav-menu {
     display: none;
   }
@@ -2777,6 +2789,54 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .edu-grid,
+  .services-grid,
+  .certs-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  .cms-btn-inner {
+    gap: 0.3rem;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+  }
+
+  .cms-text {
+    display: none;
+  }
+
+  .hero-status-row {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .hero-status-pill {
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  .code-comment-tag {
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tag-text {
+    flex-basis: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+
   .hero-actions {
     flex-direction: column;
     width: 100%;
@@ -2805,12 +2865,20 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .typing-text {
-    font-size: 1.15rem;
+    font-size: 0.95rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .typing-container {
+    min-width: 0;
+    flex: 1;
   }
 
   .profile-card-wrapper {
-    width: 220px;
-    height: 220px;
+    width: min(220px, calc(100vw - 4rem));
+    height: auto;
+    aspect-ratio: 1;
   }
 
   .profile-orbital-ring.ring-2 {
@@ -2820,6 +2888,15 @@ h1, h2, h3, h4, h5, h6 {
   .profile-satellite-badge {
     padding: 0.35rem 0.75rem;
     font-size: 0.75rem;
+  }
+
+  .profile-satellite-badge.badge-top-left {
+    left: 0;
+    top: 0.6rem;
+  }
+
+  .profile-satellite-badge.badge-bottom-right {
+    right: 0;
   }
 }
 
