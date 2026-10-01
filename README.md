@@ -145,25 +145,85 @@ All 8 automated tests verify homepage rendering, CV download, AJAX contact form 
 
 ---
 
-## 🌐 Production Deployment Guide
+## 🌐 Production Deployment Guide (Render + Supabase + Cloudinary)
 
-### Deploying to PythonAnywhere / Render / Railway / VPS:
-1. **Set Environment Variables**:
-   - `DEBUG=False`
-   - `SECRET_KEY=<generate-a-strong-random-key>`
-   - `ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com`
-   - `DATABASE_URL=postgresql://user:password@host:5432/dbname` (Optional, defaults to SQLite)
-2. **Collect Static Files**:
-   ```bash
-   python manage.py collectstatic --noinput
+This project is pre-configured for modern, serverless cloud deployment using:
+- **Render**: Web service hosting (Gunicorn + WhiteNoise)
+- **Supabase**: Managed PostgreSQL database (persistent free tier)
+- **Cloudinary**: Cloud media and asset storage (dynamic image & PDF handling)
+
+---
+
+### Step 1: Create Supabase PostgreSQL Database
+1. Go to [Supabase](https://supabase.com) and create or open your project.
+2. Navigate to **Project Settings** &rarr; **Database** &rarr; **Connection String**.
+3. Select the **URI** tab and choose **Session pooler** (port `5432` - recommended for IPv4):
+   ```text
+  postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres?sslmode=require
    ```
-3. **Run Migrations on Server**:
-   ```bash
-   python manage.py migrate
-   python manage.py seed_portfolio
-   ```
-4. **Web Server**:
-   - Use Gunicorn / Uvicorn with WhiteNoise for fast, reliable static delivery.
+4. Copy this URI (replace `[YOUR-PASSWORD]` with your actual database password).
+
+---
+
+### Step 2: Get Cloudinary API Credentials
+1. Go to [Cloudinary](https://cloudinary.com) and log in to the Dashboard / Console.
+2. Note your 3 credentials from the **Product Environment** summary:
+   - **Cloud Name** (`CLOUDINARY_CLOUD_NAME`)
+   - **API Key** (`CLOUDINARY_API_KEY`)
+   - **API Secret** (`CLOUDINARY_API_SECRET`)
+
+---
+
+### Step 3: Deploy to Render
+
+#### Option A: One-Click Blueprint (`render.yaml`)
+1. Push your code to GitHub.
+2. Go to [Render Dashboard](https://dashboard.render.com/) &rarr; **New** &rarr; **Blueprint**.
+3. Connect your GitHub repository `Er.-Milan-Magrati-Portfolio`.
+4. Render will detect `render.yaml`. Fill in the prompted secret variables:
+  - `DATABASE_URL`: Your Supabase connection string.
+   - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary Cloud Name.
+   - `CLOUDINARY_API_KEY`: Your Cloudinary API Key.
+   - `CLOUDINARY_API_SECRET`: Your Cloudinary API Secret.
+   - `ADMIN_PASSWORD`: Your desired superuser password for `/dashboard/` & `/admin/`.
+5. Click **Apply**.
+
+#### Option B: Manual Web Service Setup
+1. In Render Dashboard, click **New +** &rarr; **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the settings:
+   - **Name**: `milan-magrati-portfolio`
+   - **Environment**: `Python 3`
+   - **Region**: Choose the closest region (e.g., Singapore or Frankfurt)
+   - **Branch**: `main`
+   - **Build Command**: `./build.sh`
+   - **Start Command**: `cd project && gunicorn project.wsgi:application`
+   - **Plan**: `Free`
+4. Add the following **Environment Variables**:
+   | Key | Value | Notes |
+   | :--- | :--- | :--- |
+   | `DEBUG` | `False` | Production mode |
+   | `PYTHON_VERSION` | `3.12.8` | Stable Python runtime |
+   | `SECRET_KEY` | *(Generate a random 50-character string)* | Django security key |
+  | `DATABASE_URL` | `postgresql://postgres...` | Your Supabase connection URI |
+   | `CLOUDINARY_CLOUD_NAME` | *(Your Cloudinary Cloud Name)* | Cloudinary media storage |
+   | `CLOUDINARY_API_KEY` | *(Your Cloudinary API Key)* | Cloudinary media storage |
+   | `CLOUDINARY_API_SECRET` | *(Your Cloudinary API Secret)* | Cloudinary media storage |
+   | `ADMIN_USERNAME` | `admin` | CMS & Django Admin superuser |
+   | `ADMIN_EMAIL` | `milanmagrati68@gmail.com` | Notification & superuser email |
+   | `ADMIN_PASSWORD` | *(Your secure password)* | Password for dashboard login |
+5. Click **Deploy Web Service**.
+
+---
+
+### Step 4: Verification & Live Site
+The `./build.sh` script automatically:
+1. Installs all production dependencies.
+2. Gathers and compresses static CSS/JS/SVG assets via WhiteNoise (`collectstatic`).
+3. Applies database migrations to Supabase (`migrate`).
+4. Seeds all authentic portfolio data, designations, projects, experience, education, and uploads your authentic CV and profile avatar directly to Cloudinary (`seed_portfolio`).
+
+Your portfolio is immediately live at `https://<your-render-subdomain>.onrender.com`!
 
 ---
 

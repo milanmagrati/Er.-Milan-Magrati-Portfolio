@@ -44,23 +44,30 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(f"Superuser '{admin_username}' already exists."))
 
         # 2. Seed Resume File from Milan_Magrati_CV_2026.pdf
-        cv_source_path = os.path.join(settings.BASE_DIR, "Milan_Magrati_CV_2026.pdf")
+        cv_candidates = [
+            os.path.join(settings.BASE_DIR, "Milan_Magrati_CV_2026.pdf"),
+            os.path.join(settings.MEDIA_ROOT, "resumes", "Milan_Magrati_CV_2026.pdf"),
+        ]
+        cv_source_path = next((p for p in cv_candidates if os.path.exists(p)), None)
         cv_media_dir = os.path.join(settings.MEDIA_ROOT, "resumes")
         os.makedirs(cv_media_dir, exist_ok=True)
         cv_target_filename = "Milan_Magrati_CV_2026.pdf"
         cv_target_path = os.path.join(cv_media_dir, cv_target_filename)
 
-        if os.path.exists(cv_source_path):
-            shutil.copy2(cv_source_path, cv_target_path)
+        if cv_source_path and os.path.exists(cv_source_path):
+            if cv_source_path != cv_target_path and not os.path.exists(cv_target_path):
+                shutil.copy2(cv_source_path, cv_target_path)
             ResumeFile.objects.all().update(is_active=False)
             resume_obj, created = ResumeFile.objects.get_or_create(
                 title="Milan Magrati CV 2026",
-                defaults={"file": f"resumes/{cv_target_filename}", "is_active": True},
+                defaults={"is_active": True},
             )
-            if not created:
-                resume_obj.file = f"resumes/{cv_target_filename}"
-                resume_obj.is_active = True
-                resume_obj.save()
+            if created or not resume_obj.file:
+                from django.core.files import File
+                with open(cv_source_path, "rb") as f:
+                    resume_obj.file.save(cv_target_filename, File(f), save=True)
+            resume_obj.is_active = True
+            resume_obj.save()
             self.stdout.write(self.style.SUCCESS("Seeded active CV from Milan_Magrati_CV_2026.pdf."))
 
         # 3. Personal Profile
@@ -99,6 +106,20 @@ class Command(BaseCommand):
                 "code_commits": 500,
             },
         )
+
+        # Seed profile avatar image if present and profile has no image
+        avatar_candidates = [
+            os.path.join(settings.MEDIA_ROOT, "profile", "Milan.jpg"),
+            os.path.join(settings.MEDIA_ROOT, "profile", "profile_cropped_1.jpg"),
+            os.path.join(settings.MEDIA_ROOT, "profile", "profile_cropped_1_sK7fKGv.jpg"),
+        ]
+        avatar_path = next((p for p in avatar_candidates if os.path.exists(p)), None)
+        if avatar_path and (not profile.profile_image or not getattr(profile.profile_image, 'name', None)):
+            from django.core.files import File
+            with open(avatar_path, "rb") as f:
+                profile.profile_image.save(os.path.basename(avatar_path), File(f), save=True)
+            self.stdout.write(self.style.SUCCESS("Seeded profile avatar image."))
+
         self.stdout.write(self.style.SUCCESS("Seeded Personal Profile."))
 
         # 4. Designations (Hero Animated Rotating Titles)

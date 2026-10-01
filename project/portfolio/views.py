@@ -125,15 +125,34 @@ def contact_submit(request):
 
 def download_resume(request):
     """
-    Directly serve the active uploaded CV, or fall back to the root Milan_Magrati_CV_2026.pdf
+    Serve the active uploaded CV (redirecting to CDN if on Cloudinary or streaming locally),
+    with graceful fallback to Milan_Magrati_CV_2026.pdf.
     """
     active_resume = ResumeFile.objects.filter(is_active=True).first()
-    if active_resume and active_resume.file and os.path.exists(active_resume.file.path):
-        return FileResponse(open(active_resume.file.path, 'rb'), as_attachment=True, filename=os.path.basename(active_resume.file.name))
+    if active_resume and active_resume.file:
+        try:
+            # If using Cloudinary / remote storage, redirect directly to CDN URL
+            if hasattr(active_resume.file, 'url'):
+                file_url = active_resume.file.url
+                if file_url.startswith(('http://', 'https://')):
+                    return redirect(file_url)
+            # Local file storage stream
+            return FileResponse(
+                active_resume.file.open('rb'),
+                as_attachment=True,
+                filename=os.path.basename(active_resume.file.name)
+            )
+        except Exception:
+            pass
 
-    fallback_path = os.path.join(settings.BASE_DIR, 'Milan_Magrati_CV_2026.pdf')
-    if os.path.exists(fallback_path):
-        return FileResponse(open(fallback_path, 'rb'), as_attachment=True, filename='Milan_Magrati_CV_2026.pdf')
+    # Check fallback locations for authentic CV
+    fallback_candidates = [
+        os.path.join(settings.BASE_DIR, 'Milan_Magrati_CV_2026.pdf'),
+        os.path.join(settings.MEDIA_ROOT, 'resumes', 'Milan_Magrati_CV_2026.pdf'),
+    ]
+    for fallback in fallback_candidates:
+        if os.path.exists(fallback):
+            return FileResponse(open(fallback, 'rb'), as_attachment=True, filename='Milan_Magrati_CV_2026.pdf')
 
     raise Http404("Resume file not found")
 
