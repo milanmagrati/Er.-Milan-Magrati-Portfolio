@@ -2,6 +2,7 @@ services:
   - type: web
     name: milan-magrati-portfolio
     runtime: python
+    healthCheckPath: /health/
     buildCommand: "./build.sh"
     startCommand: "cd project && gunicorn project.wsgi:application"
     plan: free

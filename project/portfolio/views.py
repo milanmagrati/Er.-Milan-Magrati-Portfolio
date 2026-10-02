@@ -67,6 +67,10 @@ def portfolio_home(request):
     return render(request, 'portfolio/index.html', context)
 
 
+def health_check(request):
+    return HttpResponse("OK", content_type="text/plain")
+
+
 def project_detail(request, slug):
     project = get_object_or_404(Project, slug=slug, is_active=True)
     other_projects = Project.objects.filter(is_active=True).exclude(pk=project.pk).order_by('display_order')[:3]

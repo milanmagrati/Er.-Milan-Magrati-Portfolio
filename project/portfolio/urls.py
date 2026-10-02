@@ -5,6 +5,7 @@ app_name = 'portfolio'
 
 urlpatterns = [
     path('', views.portfolio_home, name='home'),
+    path('health/', views.health_check, name='health-check'),
     path('project/<slug:slug>/', views.project_detail, name='project-detail'),
     path('contact/submit/', views.contact_submit, name='contact-submit'),
     path('download-cv/', views.download_resume, name='download-cv'),
