@@ -13,7 +13,8 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-milan-magrati-portfolio-key-change-in-production-2026!')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1],testserver').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS',
+'milanmagrati.com.np,www.milanmagrati.com.np,localhost,127.0.0.1,[::1],testserver').split(',')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 if 'testserver' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('testserver')
