@@ -56,6 +56,14 @@ class PortfolioTests(TestCase):
             is_staff=True
         )
 
+    def test_health_check_returns_small_plain_text_response(self):
+        with self.assertNumQueries(0):
+            response = self.client.get(reverse('portfolio:health-check'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertEqual(response.content, b'OK')
+
     def test_homepage_status_and_content(self):
         response = self.client.get(reverse('portfolio:home'))
         self.assertEqual(response.status_code, 200)
