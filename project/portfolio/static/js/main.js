@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDesignationTyper();
   initNavbarScrollSpy();
   initSectionRoute();
+  initSectionNavigation();
   initMobileNav();
   initSkillsFilter();
   initProjectsFilter();
@@ -177,8 +178,44 @@ function initSectionRoute() {
 
   const section = document.getElementById(sectionId);
   if (section) {
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section.scrollIntoView({ behavior: 'instant', block: 'start' });
   }
+}
+
+function initSectionNavigation() {
+  const sectionLinks = [...document.querySelectorAll('.nav-link[data-section], .mobile-nav-link[data-section]')];
+
+  const scrollToSection = (sectionId, behavior) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    document.body.dataset.currentSection = sectionId;
+    section.scrollIntoView({ behavior, block: 'start' });
+  };
+
+  sectionLinks.forEach(link => {
+    link.addEventListener('click', event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (link.target && link.target !== '_self') return;
+
+      const destination = new URL(link.href, window.location.href);
+      if (destination.origin !== window.location.origin) return;
+
+      const sectionId = link.dataset.section;
+      if (!sectionId || !document.getElementById(sectionId)) return;
+
+      event.preventDefault();
+      if (destination.pathname !== window.location.pathname) {
+        window.history.pushState({ sectionId }, '', destination.pathname);
+      }
+      scrollToSection(sectionId, 'smooth');
+    });
+  });
+
+  window.addEventListener('popstate', () => {
+    const currentLink = sectionLinks.find(link => new URL(link.href, window.location.href).pathname === window.location.pathname);
+    scrollToSection(currentLink?.dataset.section || 'hero', 'smooth');
+  });
 }
 
 /* ==========================================================================
