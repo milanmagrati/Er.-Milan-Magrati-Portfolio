@@ -23,7 +23,7 @@ from .models import (
 )
 
 
-def portfolio_home(request):
+def portfolio_home(request, section='hero'):
     profile = PersonalProfile.objects.first()
     designations = Designation.objects.filter(is_active=True).order_by('display_order')
     categories = SkillCategory.objects.prefetch_related('skills').order_by('display_order')
@@ -50,6 +50,7 @@ def portfolio_home(request):
     ]
 
     context = {
+        'current_section': section,
         'profile': profile,
         'designation_titles': designation_titles,
         'categories': categories,

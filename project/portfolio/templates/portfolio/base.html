@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260924_hero_perfect_balance">
   {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body data-current-section="{{ current_section|default:'hero' }}">
 
   <!-- Site Navigation Header -->
   <header class="site-header" id="site-header">
@@ -54,15 +54,15 @@
 
         <!-- Desktop Navigation Links -->
         <ul class="nav-menu" id="nav-menu">
-          <li><a href="#hero" class="nav-link active">Home</a></li>
-          {% if site_settings.enable_about %}<li><a href="#about" class="nav-link">About</a></li>{% endif %}
-          {% if site_settings.enable_skills %}<li><a href="#skills" class="nav-link">Skills</a></li>{% endif %}
-          {% if site_settings.enable_experience %}<li><a href="#experience" class="nav-link">Experience</a></li>{% endif %}
-          {% if site_settings.enable_education %}<li><a href="#education" class="nav-link">Education</a></li>{% endif %}
-          {% if site_settings.enable_projects %}<li><a href="#projects" class="nav-link">Projects</a></li>{% endif %}
-          {% if site_settings.enable_services %}<li><a href="#services" class="nav-link">Services</a></li>{% endif %}
-          {% if site_settings.enable_certifications %}<li><a href="#certifications" class="nav-link">Certificates</a></li>{% endif %}
-          {% if site_settings.enable_contact %}<li><a href="#contact" class="nav-link">Contact</a></li>{% endif %}
+          <li><a href="{% url 'portfolio:home' %}" class="nav-link" data-section="hero">Home</a></li>
+          {% if site_settings.enable_about %}<li><a href="{% url 'portfolio:about' %}" class="nav-link" data-section="about">About</a></li>{% endif %}
+          {% if site_settings.enable_skills %}<li><a href="{% url 'portfolio:skills' %}" class="nav-link" data-section="skills">Skills</a></li>{% endif %}
+          {% if site_settings.enable_experience %}<li><a href="{% url 'portfolio:experience' %}" class="nav-link" data-section="experience">Experience</a></li>{% endif %}
+          {% if site_settings.enable_education %}<li><a href="{% url 'portfolio:education' %}" class="nav-link" data-section="education">Education</a></li>{% endif %}
+          {% if site_settings.enable_projects %}<li><a href="{% url 'portfolio:projects' %}" class="nav-link" data-section="projects">Projects</a></li>{% endif %}
+          {% if site_settings.enable_services %}<li><a href="{% url 'portfolio:services' %}" class="nav-link" data-section="services">Services</a></li>{% endif %}
+          {% if site_settings.enable_certifications %}<li><a href="{% url 'portfolio:certificates' %}" class="nav-link" data-section="certifications">Certificates</a></li>{% endif %}
+          {% if site_settings.enable_contact %}<li><a href="{% url 'portfolio:contact' %}" class="nav-link" data-section="contact">Contact</a></li>{% endif %}
         </ul>
 
         <!-- Navigation Actions (Theme Switcher + Admin Link) -->
@@ -106,15 +106,15 @@
 
     <!-- Mobile Navigation Drawer -->
     <div id="mobile-nav-drawer" class="mobile-nav-drawer">
-      <a href="#hero" class="mobile-nav-link active">Home</a>
-      {% if site_settings.enable_about %}<a href="#about" class="mobile-nav-link">About</a>{% endif %}
-      {% if site_settings.enable_skills %}<a href="#skills" class="mobile-nav-link">Skills</a>{% endif %}
-      {% if site_settings.enable_experience %}<a href="#experience" class="mobile-nav-link">Experience</a>{% endif %}
-      {% if site_settings.enable_education %}<a href="#education" class="mobile-nav-link">Education</a>{% endif %}
-      {% if site_settings.enable_projects %}<a href="#projects" class="mobile-nav-link">Projects</a>{% endif %}
-      {% if site_settings.enable_services %}<a href="#services" class="mobile-nav-link">Services</a>{% endif %}
-      {% if site_settings.enable_certifications %}<a href="#certifications" class="mobile-nav-link">Certificates</a>{% endif %}
-      {% if site_settings.enable_contact %}<a href="#contact" class="mobile-nav-link">Contact</a>{% endif %}
+      <a href="{% url 'portfolio:home' %}" class="mobile-nav-link" data-section="hero">Home</a>
+      {% if site_settings.enable_about %}<a href="{% url 'portfolio:about' %}" class="mobile-nav-link" data-section="about">About</a>{% endif %}
+      {% if site_settings.enable_skills %}<a href="{% url 'portfolio:skills' %}" class="mobile-nav-link" data-section="skills">Skills</a>{% endif %}
+      {% if site_settings.enable_experience %}<a href="{% url 'portfolio:experience' %}" class="mobile-nav-link" data-section="experience">Experience</a>{% endif %}
+      {% if site_settings.enable_education %}<a href="{% url 'portfolio:education' %}" class="mobile-nav-link" data-section="education">Education</a>{% endif %}
+      {% if site_settings.enable_projects %}<a href="{% url 'portfolio:projects' %}" class="mobile-nav-link" data-section="projects">Projects</a>{% endif %}
+      {% if site_settings.enable_services %}<a href="{% url 'portfolio:services' %}" class="mobile-nav-link" data-section="services">Services</a>{% endif %}
+      {% if site_settings.enable_certifications %}<a href="{% url 'portfolio:certificates' %}" class="mobile-nav-link" data-section="certifications">Certificates</a>{% endif %}
+      {% if site_settings.enable_contact %}<a href="{% url 'portfolio:contact' %}" class="mobile-nav-link" data-section="contact">Contact</a>{% endif %}
       <a href="{% url 'dashboard:home' %}" class="mobile-nav-link mobile-cms-btn">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
           <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>

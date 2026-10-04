@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initThemeEngine();
   initDesignationTyper();
   initNavbarScrollSpy();
+  initSectionRoute();
   initMobileNav();
   initSkillsFilter();
   initProjectsFilter();
@@ -138,7 +139,7 @@ function initNavbarScrollSpy() {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
 
-  window.addEventListener('scroll', () => {
+  const updateNavigation = () => {
     // Header shadow on scroll
     if (window.scrollY > 40) {
       header?.classList.add('scrolled');
@@ -160,12 +161,24 @@ function initNavbarScrollSpy() {
 
     navLinks.forEach(link => {
       link.classList.remove('active');
-      const href = link.getAttribute('href');
-      if (href === `#${currentSection}`) {
+      if (link.getAttribute('data-section') === currentSection) {
         link.classList.add('active');
       }
     });
-  });
+  };
+
+  window.addEventListener('scroll', updateNavigation);
+  updateNavigation();
+}
+
+function initSectionRoute() {
+  const sectionId = document.body.dataset.currentSection;
+  if (!sectionId || sectionId === 'hero') return;
+
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 /* ==========================================================================
@@ -548,4 +561,3 @@ function initProfileTilt() {
     wrapper.style.transition = 'transform 0.5s ease-out';
   });
 }
-

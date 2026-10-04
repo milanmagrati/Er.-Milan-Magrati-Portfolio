@@ -71,6 +71,25 @@ class PortfolioTests(TestCase):
         self.assertContains(response, "Python Full Stack Developer")
         self.assertContains(response, "E-Commerce Website")
 
+    def test_section_routes_render_the_portfolio_at_the_requested_section(self):
+        sections = {
+            'about': 'about',
+            'skills': 'skills',
+            'experience': 'experience',
+            'education': 'education',
+            'projects': 'projects',
+            'services': 'services',
+            'certificates': 'certifications',
+            'contact': 'contact',
+        }
+
+        for route_name, section_id in sections.items():
+            with self.subTest(route=route_name):
+                response = self.client.get(reverse(f'portfolio:{route_name}'))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, f'data-current-section="{section_id}"')
+                self.assertContains(response, f'href="{reverse(f"portfolio:{route_name}")}"')
+
     def test_project_detail_view(self):
         response = self.client.get(reverse('portfolio:project-detail', kwargs={'slug': self.project.slug}))
         self.assertEqual(response.status_code, 200)
